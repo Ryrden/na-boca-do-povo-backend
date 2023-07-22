@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ryrden/na-boca-do-povo-backend/controller"
-	"github.com/ryrden/na-boca-do-povo-backend/model"
+	"github.com/ryrden/na-boca-do-povo-backend/dto"
 )
 
 type UserApi struct {
@@ -20,26 +20,39 @@ func NewUserAPI(userController controller.UserController) *UserApi {
 
 func (api *UserApi) GetUsers(ctx *gin.Context) {
 	user := api.userController.FindAll()
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, dto.Response{
+		Status:  http.StatusOK,
+		Message: "Users found successfully",
+		Data:   user,
+	})
 }
 
-//TODO: implement
+// TODO: implement
 func (api *UserApi) GetUser(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, model.NotImplementedResponse)
+	response := api.userController.FindById(ctx)
+	if response.Status != http.StatusOK {
+		ctx.JSON(response.Status, response)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
 }
 
-//TODO: implement
+// TODO: implement
 func (api *UserApi) Create(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, model.NotImplementedResponse)
+	ctx.JSON(http.StatusNotImplemented, dto.NotImplementedResponse)
 }
 
-//TODO: implement
+// TODO: implement
 func (api *UserApi) Update(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, model.NotImplementedResponse)
+	response := api.userController.Update(ctx)
+	if response.Status != http.StatusOK {
+		ctx.JSON(response.Status, response)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
 }
 
-//TODO: implement
+// TODO: implement
 func (api *UserApi) Delete(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, model.NotImplementedResponse)
+	ctx.JSON(http.StatusNotImplemented, dto.NotImplementedResponse)
 }
-

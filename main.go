@@ -14,6 +14,13 @@ var (
 	userController controller.UserController = controller.NewUserController(userService)
 )
 
+func setHeaders(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Content-Type", "application/json")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	ctx.Next()
+}
+
 func main() {
 	server := gin.New()
 
@@ -22,6 +29,7 @@ func main() {
 	userAPI := api.NewUserAPI(userController)
 
 	apiRoutes := server.Group("/api")
+	apiRoutes.Use(setHeaders)
 	{
 		user := apiRoutes.Group("/user")
 		{
@@ -32,6 +40,7 @@ func main() {
 			user.DELETE("/:id", userAPI.Delete)
 		}
 	}
+
 
 	server.Run("localhost:5000")
 }

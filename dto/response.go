@@ -1,4 +1,4 @@
-package model
+package dto
 
 import "net/http"
 
@@ -12,5 +12,11 @@ type Response struct {
 var NotImplementedResponse = Response{
 	Status:  http.StatusNotImplemented,
 	Message: "Not Implemented",
+	Data:    nil,
+}
+
+var NotFoundResponse = Response{
+	Status:  http.StatusNotFound,
+	Message: "Not Found",
 	Data:    nil,
 }
