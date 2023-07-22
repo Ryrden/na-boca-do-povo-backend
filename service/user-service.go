@@ -11,6 +11,7 @@ import (
 type UserService interface {
 	FindAll() []model.User
 	FindById(id uint64) dto.Response
+	Create(newUser model.User) dto.Response
 	Update(id uint64, newUser model.User) dto.Response
 }
 
@@ -41,6 +42,23 @@ func (service *userService) FindById(id uint64) dto.Response {
 		Status:  http.StatusOK,
 		Message: "user found successfully",
 		Data:    user,
+	}
+}
+
+func (service *userService) Create(user model.User) dto.Response {
+	//print user
+	newUser, err := service.repository.Create(user)
+	if err != nil {
+		return dto.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:   nil,
+		}
+	}
+	return dto.Response{
+		Status:  http.StatusOK,
+		Message: "user created successfully",
+		Data:    newUser,
 	}
 }
 

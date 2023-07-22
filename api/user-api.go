@@ -39,7 +39,12 @@ func (api *UserApi) GetUser(ctx *gin.Context) {
 
 // TODO: implement
 func (api *UserApi) Create(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, dto.NotImplementedResponse)
+	response := api.userController.Create(ctx)
+	if response.Status != http.StatusOK {
+		ctx.JSON(response.Status, response)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
 }
 
 // TODO: implement

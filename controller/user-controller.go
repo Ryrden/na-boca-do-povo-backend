@@ -13,6 +13,7 @@ import (
 type UserController interface {
 	FindAll() []model.User
 	FindById(ctx *gin.Context) dto.Response
+	Create(ctx *gin.Context) dto.Response
 	Update(ctx *gin.Context) dto.Response
 }
 
@@ -40,6 +41,18 @@ func (c *controller) FindById(ctx *gin.Context) dto.Response {
 		}
 	}
 	return c.service.FindById(id)
+}
+
+func (c *controller) Create(ctx *gin.Context) dto.Response {
+	var user model.User
+	if err := ctx.BindJSON(&user); err != nil {
+		return dto.Response{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+			Data:  nil,
+		}
+	}
+	return c.service.Create(user)
 }
 
 func (c *controller) Update(ctx *gin.Context) dto.Response {
