@@ -1,28 +1,25 @@
 package dto
 
-import "net/http"
-
-// Response represents the API response format
 type Response struct {
-	Status  int         `json:"status"`
+	Success bool        `json:"success"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
 var NotImplementedResponse = Response{
-	Status:  http.StatusNotImplemented,
+	Success: false,
 	Message: "not implemented",
 	Data:    nil,
 }
 
 var NotFoundResponse = Response{
-	Status:  http.StatusNotFound,
+	Success: false,
 	Message: "not found",
 	Data:    nil,
 }
 
 var InvalidIdResponse = Response{
-	Status:  http.StatusBadRequest,
+	Success: false,
 	Message: "invalid id",
 	Data:    nil,
 }

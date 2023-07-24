@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ryrden/na-boca-do-povo-backend/controller"
-	"github.com/ryrden/na-boca-do-povo-backend/dto"
 )
 
 type UserApi struct {
@@ -19,47 +18,47 @@ func NewUserAPI(userController controller.UserController) *UserApi {
 }
 
 func (api *UserApi) GetUsers(ctx *gin.Context) {
-	user := api.userController.FindAll()
-	ctx.JSON(http.StatusOK, dto.Response{
-		Status:  http.StatusOK,
-		Message: "Users found successfully",
-		Data:   user,
-	})
+	status, response := api.userController.FindAll()
+	if status != http.StatusOK {
+		ctx.JSON(status, response)
+		return
+	}
+	ctx.JSON(status, response)
 }
 
 func (api *UserApi) GetUser(ctx *gin.Context) {
-	response := api.userController.FindById(ctx)
-	if response.Status != http.StatusOK {
-		ctx.JSON(response.Status, response)
+	status, response := api.userController.FindById(ctx)
+	if status != http.StatusOK {
+		ctx.JSON(status, response)
 		return
 	}
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(status, response)
 }
 
 func (api *UserApi) Create(ctx *gin.Context) {
-	response := api.userController.Create(ctx)
-	if response.Status != http.StatusOK {
-		ctx.JSON(response.Status, response)
+	status, response := api.userController.Create(ctx)
+	if status != http.StatusOK {
+		ctx.JSON(status, response)
 		return
 	}
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(status, response)
 }
 
 func (api *UserApi) Update(ctx *gin.Context) {
-	response := api.userController.Update(ctx)
-	if response.Status != http.StatusOK {
-		ctx.JSON(response.Status, response)
+	status, response := api.userController.Update(ctx)
+	if status != http.StatusOK {
+		ctx.JSON(status, response)
 		return
 	}
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(status, response)
 }
 
 // TODO: implement
 func (api *UserApi) Delete(ctx *gin.Context) {
-	response := api.userController.Delete(ctx)
-	if response.Status != http.StatusOK {
-		ctx.JSON(response.Status, response)
+	status, response := api.userController.Delete(ctx)
+	if status != http.StatusOK {
+		ctx.JSON(status, response)
 		return
 	}
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(status, response)
 }

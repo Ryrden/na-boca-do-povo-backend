@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	FindAll() []model.User
+	FindAll() ([]model.User, error)
 	FindById(id uint64) (model.User, error)
 	Create(newUser model.User) (model.User, error)
 	Update(id uint64, newUser model.User) (model.User, error)
@@ -33,11 +33,14 @@ func NewUserRepository() UserRepository {
 	}
 }
 
-func (db *database) FindAll() []model.User {
+func (db *database) FindAll() ([]model.User, error) {
 	var users []model.User
-	//TODO: use pagination
-	db.connection.Order("id").Find(&users)
-	return users
+	dbResponse := db.connection.Order("id").Find(&users)
+	if dbResponse.Error != nil {
+		// REVIEW: is this the best way to handle this error?
+		return nil, fmt.Errorf("error finding users: %s", dbResponse.Error)
+	}
+	return users, nil
 }
 
 func (db *database) FindById(id uint64) (model.User, error) {
