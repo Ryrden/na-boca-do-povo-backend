@@ -13,6 +13,7 @@ type UserService interface {
 	FindById(id uint64) dto.Response
 	Create(newUser model.User) dto.Response
 	Update(id uint64, newUser model.User) dto.Response
+	Delete(id uint64) dto.Response
 }
 
 type userService struct {
@@ -35,7 +36,7 @@ func (service *userService) FindById(id uint64) dto.Response {
 		return dto.Response{
 			Status:  http.StatusNotFound,
 			Message: err.Error(),
-			Data:   nil,
+			Data:    nil,
 		}
 	}
 	return dto.Response{
@@ -52,7 +53,7 @@ func (service *userService) Create(user model.User) dto.Response {
 		return dto.Response{
 			Status:  http.StatusInternalServerError,
 			Message: err.Error(),
-			Data:   nil,
+			Data:    nil,
 		}
 	}
 	return dto.Response{
@@ -68,12 +69,28 @@ func (service *userService) Update(id uint64, newUser model.User) dto.Response {
 		return dto.Response{
 			Status:  http.StatusInternalServerError,
 			Message: err.Error(),
-			Data:   nil,
+			Data:    nil,
 		}
 	}
 	return dto.Response{
 		Status:  http.StatusOK,
 		Message: "user updated successfully",
 		Data:    newUser,
+	}
+}
+
+func (service *userService) Delete(id uint64) dto.Response {
+	deletedUser, err := service.repository.Delete(id)
+	if err != nil {
+		return dto.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		}
+	}
+	return dto.Response{
+		Status:  http.StatusOK,
+		Message: "user deleted successfully",
+		Data:    deletedUser,
 	}
 }

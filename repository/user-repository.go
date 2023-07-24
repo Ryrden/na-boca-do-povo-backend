@@ -13,6 +13,7 @@ type UserRepository interface {
 	FindById(id uint64) (model.User, error)
 	Create(newUser model.User) (model.User, error)
 	Update(id uint64, newUser model.User) (model.User, error)
+	Delete(id uint64) (model.User, error)
 }
 
 type database struct {
@@ -54,9 +55,9 @@ func (db *database) Create(user model.User) (model.User, error) {
 	dbResponse := db.connection.Where("email = ?", user.Email).First(&existingUser)
 	if dbResponse.Error == nil {
 		// REVIEW: is this the best way to handle this error?
-		return model.User{}, fmt.Errorf("user with email '%s' already exists", user.Email) 
+		return model.User{}, fmt.Errorf("user with email '%s' already exists", user.Email)
 	}
-	
+
 	dbResponse = db.connection.Create(&user)
 	if dbResponse.Error != nil {
 		// REVIEW: is this the best way to handle this error?
@@ -65,7 +66,6 @@ func (db *database) Create(user model.User) (model.User, error) {
 	return user, nil
 }
 
-
 func (db *database) Update(id uint64, newUser model.User) (model.User, error) {
 	var updatedUser model.User
 	dbResponse := db.connection.First(&updatedUser, id)
@@ -73,7 +73,14 @@ func (db *database) Update(id uint64, newUser model.User) (model.User, error) {
 		// REVIEW: is this the best way to handle this error?
 		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
 	}
-	
+
+	var existingUser model.User
+	dbResponse = db.connection.Where("email = ?", newUser.Email).First(&existingUser)
+	if dbResponse.Error == nil && existingUser.ID != id {
+		// REVIEW: is this the best way to handle this error?
+		return model.User{}, fmt.Errorf("user with email '%s' already exists", newUser.Email)
+	}
+
 	//TODO: Use Mutex to threat concurrency
 	updatedUser.Name = newUser.Name
 	updatedUser.Email = newUser.Email
@@ -85,4 +92,20 @@ func (db *database) Update(id uint64, newUser model.User) (model.User, error) {
 		return model.User{}, fmt.Errorf("error updating user with id '%d: %s'", id, dbResponse.Error)
 	}
 	return updatedUser, nil
+}
+
+func (db *database) Delete(id uint64) (model.User, error) {
+	var deletedUser model.User
+	dbResponse := db.connection.First(&deletedUser, id)
+	if dbResponse.Error != nil {
+		// REVIEW: is this the best way to handle this error?
+		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
+	}
+	//TODO: Use Mutex to threat concurrency
+	dbResponse = db.connection.Delete(&deletedUser)
+	if dbResponse.Error != nil {
+		// REVIEW: is this the best way to handle this error?
+		return model.User{}, fmt.Errorf("error deleting user with id '%d': %s", id, dbResponse.Error)
+	}
+	return deletedUser, nil
 }

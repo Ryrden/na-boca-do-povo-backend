@@ -27,7 +27,6 @@ func (api *UserApi) GetUsers(ctx *gin.Context) {
 	})
 }
 
-// TODO: implement
 func (api *UserApi) GetUser(ctx *gin.Context) {
 	response := api.userController.FindById(ctx)
 	if response.Status != http.StatusOK {
@@ -37,7 +36,6 @@ func (api *UserApi) GetUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// TODO: implement
 func (api *UserApi) Create(ctx *gin.Context) {
 	response := api.userController.Create(ctx)
 	if response.Status != http.StatusOK {
@@ -47,7 +45,6 @@ func (api *UserApi) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// TODO: implement
 func (api *UserApi) Update(ctx *gin.Context) {
 	response := api.userController.Update(ctx)
 	if response.Status != http.StatusOK {
@@ -59,5 +56,10 @@ func (api *UserApi) Update(ctx *gin.Context) {
 
 // TODO: implement
 func (api *UserApi) Delete(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, dto.NotImplementedResponse)
+	response := api.userController.Delete(ctx)
+	if response.Status != http.StatusOK {
+		ctx.JSON(response.Status, response)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
 }

@@ -11,12 +11,18 @@ type Response struct {
 
 var NotImplementedResponse = Response{
 	Status:  http.StatusNotImplemented,
-	Message: "Not Implemented",
+	Message: "not implemented",
 	Data:    nil,
 }
 
 var NotFoundResponse = Response{
 	Status:  http.StatusNotFound,
-	Message: "Not Found",
+	Message: "not found",
+	Data:    nil,
+}
+
+var InvalidIdResponse = Response{
+	Status:  http.StatusBadRequest,
+	Message: "invalid id",
 	Data:    nil,
 }

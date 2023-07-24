@@ -15,6 +15,7 @@ type UserController interface {
 	FindById(ctx *gin.Context) dto.Response
 	Create(ctx *gin.Context) dto.Response
 	Update(ctx *gin.Context) dto.Response
+	Delete(ctx *gin.Context) dto.Response
 }
 
 type controller struct {
@@ -34,11 +35,7 @@ func (c *controller) FindAll() []model.User {
 func (c *controller) FindById(ctx *gin.Context) dto.Response {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
-		return dto.Response{
-			Status:  http.StatusBadRequest,
-			Message: "invalid id",
-			Data:  nil,
-		}
+		return dto.InvalidIdResponse
 	}
 	return c.service.FindById(id)
 }
@@ -49,7 +46,7 @@ func (c *controller) Create(ctx *gin.Context) dto.Response {
 		return dto.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
-			Data:  nil,
+			Data:    nil,
 		}
 	}
 	return c.service.Create(user)
@@ -58,19 +55,23 @@ func (c *controller) Create(ctx *gin.Context) dto.Response {
 func (c *controller) Update(ctx *gin.Context) dto.Response {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
-		return dto.Response{
-			Status:  http.StatusBadRequest,
-			Message: "invalid id",
-			Data:  nil,
-		}
+		return dto.InvalidIdResponse
 	}
 	var newUser model.User
 	if err := ctx.BindJSON(&newUser); err != nil {
 		return dto.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
-			Data:  nil,
+			Data:    nil,
 		}
 	}
 	return c.service.Update(id, newUser)
+}
+
+func (c *controller) Delete(ctx *gin.Context) dto.Response {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return dto.InvalidIdResponse
+	}
+	return c.service.Delete(id)
 }
