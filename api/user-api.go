@@ -53,7 +53,6 @@ func (api *UserApi) Update(ctx *gin.Context) {
 	ctx.JSON(status, response)
 }
 
-// TODO: implement
 func (api *UserApi) Delete(ctx *gin.Context) {
 	status, response := api.userController.Delete(ctx)
 	if status != http.StatusOK {

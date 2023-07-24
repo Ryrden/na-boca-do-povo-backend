@@ -16,7 +16,7 @@ type UserRepository interface {
 	Delete(id uint64) (model.User, error)
 }
 
-type database struct {
+type UserRepositoryDatabase struct {
 	connection *gorm.DB
 }
 
@@ -28,12 +28,12 @@ func NewUserRepository() UserRepository {
 		panic("Failed to connect database")
 	}
 	db.AutoMigrate(&model.User{})
-	return &database{
+	return &UserRepositoryDatabase{
 		connection: db,
 	}
 }
 
-func (db *database) FindAll() ([]model.User, error) {
+func (db *UserRepositoryDatabase) FindAll() ([]model.User, error) {
 	var users []model.User
 	dbResponse := db.connection.Order("id").Find(&users)
 	if dbResponse.Error != nil {
@@ -43,44 +43,44 @@ func (db *database) FindAll() ([]model.User, error) {
 	return users, nil
 }
 
-func (db *database) FindById(id uint64) (model.User, error) {
+func (db *UserRepositoryDatabase) FindById(id uint64) (model.User, error) {
 	var user model.User
 	dbResponse := db.connection.First(&user, id)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
 	}
 	return user, nil
 }
 
-func (db *database) Create(user model.User) (model.User, error) {
+func (db *UserRepositoryDatabase) Create(user model.User) (model.User, error) {
 	var existingUser model.User
 	dbResponse := db.connection.Where("email = ?", user.Email).First(&existingUser)
 	if dbResponse.Error == nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("user with email '%s' already exists", user.Email)
 	}
 
 	dbResponse = db.connection.Create(&user)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("error creating user: %s", dbResponse.Error)
 	}
 	return user, nil
 }
 
-func (db *database) Update(id uint64, newUser model.User) (model.User, error) {
+func (db *UserRepositoryDatabase) Update(id uint64, newUser model.User) (model.User, error) {
 	var updatedUser model.User
 	dbResponse := db.connection.First(&updatedUser, id)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
 	}
 
 	var existingUser model.User
 	dbResponse = db.connection.Where("email = ?", newUser.Email).First(&existingUser)
 	if dbResponse.Error == nil && existingUser.ID != id {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("user with email '%s' already exists", newUser.Email)
 	}
 
@@ -91,23 +91,23 @@ func (db *database) Update(id uint64, newUser model.User) (model.User, error) {
 
 	dbResponse = db.connection.Save(&updatedUser)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("error updating user with id '%d: %s'", id, dbResponse.Error)
 	}
 	return updatedUser, nil
 }
 
-func (db *database) Delete(id uint64) (model.User, error) {
+func (db *UserRepositoryDatabase) Delete(id uint64) (model.User, error) {
 	var deletedUser model.User
 	dbResponse := db.connection.First(&deletedUser, id)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
 	}
 	//TODO: Use Mutex to threat concurrency
 	dbResponse = db.connection.Delete(&deletedUser)
 	if dbResponse.Error != nil {
-		// REVIEW: is this the best way to handle this error?
+		// TODO: Create Error Handler 
 		return model.User{}, fmt.Errorf("error deleting user with id '%d': %s", id, dbResponse.Error)
 	}
 	return deletedUser, nil

@@ -59,7 +59,6 @@ func (service *userService) FindById(id uint64) (int, dto.Response) {
 }
 
 func (service *userService) Create(user model.User) (int, dto.Response) {
-	//print user
 	newUser, err := service.repository.Create(user)
 	if err != nil {
 		return http.StatusInternalServerError, dto.Response{

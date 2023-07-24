@@ -12,6 +12,11 @@ var (
 	userRepository repository.UserRepository = repository.NewUserRepository()
 	userService    service.UserService       = service.NewUserService(userRepository)
 	userController controller.UserController = controller.NewUserController(userService)
+
+	// REVIEW: maybe pass the user repository to the favorite congress person repository is the best way
+	var favoriteCongressPersonRepository repository.FavoriteCongressPersonRepository = repository.NewFavoriteCongressPersonRepository()
+	var favoriteCongressPersonService    service.FavoriteCongressPersonService       = service.NewFavoriteCongressPersonService(favoriteCongressPersonRepository)
+	var favoriteCongressPersonController controller.FavoriteCongressPersonController = controller.NewFavoriteCongressPersonController(favoriteCongressPersonService)
 )
 
 func setHeaders(ctx *gin.Context) {
@@ -27,6 +32,7 @@ func main() {
 	server.Use(gin.Recovery(), gin.Logger())
 
 	userAPI := api.NewUserAPI(userController)
+	favoriteCongressPersonApi := api.NewFavoriteCongressPersonApi(favorite)
 
 	apiRoutes := server.Group("/api")
 	apiRoutes.Use(setHeaders)
@@ -38,6 +44,12 @@ func main() {
 			user.POST("/", userAPI.Create)
 			user.PUT("/:id", userAPI.Update)
 			user.DELETE("/:id", userAPI.Delete)
+
+			favoriteCongresspersons := user.Group("/:id/favorite-congresspersons")
+			{
+				favoriteCongresspersons.GET("/", favoriteCongressPersonApi.GetFavoriteCongresspersons)
+				favoriteCongresspersons.POST("/", favoriteCongressPersonApi.AddFavoriteCongressPerson)
+			}
 		}
 	}
 
