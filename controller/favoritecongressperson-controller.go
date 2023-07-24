@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ryrden/na-boca-do-povo-backend/dto"
 	"github.com/ryrden/na-boca-do-povo-backend/model"
+	"github.com/ryrden/na-boca-do-povo-backend/service"
 )
 
 type FavoriteCongressPersonController interface {
@@ -18,10 +19,10 @@ type FavoriteCongressPersonController interface {
 }
 
 type favoriteCongressPersonController struct {
-	service FavoriteCongressPersonController
+	service service.FavoriteCongressPersonService
 }
 
-func NewFavoriteCongressPersonController(service FavoriteCongressPersonController) FavoriteCongressPersonController {
+func NewFavoriteCongressPersonController(service service.FavoriteCongressPersonService) FavoriteCongressPersonController {
 	return &favoriteCongressPersonController{
 		service: service,
 	}
@@ -51,7 +52,6 @@ func (c *favoriteCongressPersonController) AddFavoriteCongressPerson(ctx *gin.Co
 			Data:    nil,
 		}
 	}
-	// FIXME: CongressPersonJson need to be a json.RawMessage type
 	congressPersonJson = json.RawMessage(congressPersonJson)
 	return c.service.AddFavoriteCongressPerson(id, congressPersonJson)
 }
