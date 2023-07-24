@@ -14,9 +14,9 @@ var (
 	userController controller.UserController = controller.NewUserController(userService)
 
 	// REVIEW: maybe pass the user repository to the favorite congress person repository is the best way
-	var favoriteCongressPersonRepository repository.FavoriteCongressPersonRepository = repository.NewFavoriteCongressPersonRepository()
-	var favoriteCongressPersonService    service.FavoriteCongressPersonService       = service.NewFavoriteCongressPersonService(favoriteCongressPersonRepository)
-	var favoriteCongressPersonController controller.FavoriteCongressPersonController = controller.NewFavoriteCongressPersonController(favoriteCongressPersonService)
+	favoriteCongressPersonRepository repository.FavoriteCongressPersonRepository = repository.NewFavoriteCongressPersonRepository()
+	favoriteCongressPersonService    service.FavoriteCongressPersonService       = service.NewFavoriteCongressPersonService(favoriteCongressPersonRepository)
+	favoriteCongressPersonController controller.FavoriteCongressPersonController = controller.NewFavoriteCongressPersonController(favoriteCongressPersonService)
 )
 
 func setHeaders(ctx *gin.Context) {
@@ -32,7 +32,7 @@ func main() {
 	server.Use(gin.Recovery(), gin.Logger())
 
 	userAPI := api.NewUserAPI(userController)
-	favoriteCongressPersonApi := api.NewFavoriteCongressPersonApi(favorite)
+	favoriteCongressPersonApi := api.NewFavoriteCongressPersonApi(favoriteCongressPersonController)
 
 	apiRoutes := server.Group("/api")
 	apiRoutes.Use(setHeaders)
@@ -47,7 +47,7 @@ func main() {
 
 			favoriteCongresspersons := user.Group("/:id/favorite-congresspersons")
 			{
-				favoriteCongresspersons.GET("/", favoriteCongressPersonApi.GetFavoriteCongresspersons)
+				favoriteCongresspersons.GET("/", favoriteCongressPersonApi.GetFavoriteCongressPersons)
 				favoriteCongresspersons.POST("/", favoriteCongressPersonApi.AddFavoriteCongressPerson)
 			}
 		}
