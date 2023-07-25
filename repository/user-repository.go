@@ -6,6 +6,7 @@ import (
 	"github.com/ryrden/na-boca-do-povo-backend/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/datatypes"
 )
 
 type UserRepository interface {
@@ -14,6 +15,7 @@ type UserRepository interface {
 	Create(newUser model.User) (model.User, error)
 	Update(id uint64, newUser model.User) (model.User, error)
 	Delete(id uint64) (model.User, error)
+	AddFavoriteCongressPerson(id uint64, congressPerson model.FavoriteCongressPerson) (model.User, error)
 }
 
 type UserRepositoryDatabase struct {
@@ -111,4 +113,22 @@ func (db *UserRepositoryDatabase) Delete(id uint64) (model.User, error) {
 		return model.User{}, fmt.Errorf("error deleting user with id '%d': %s", id, dbResponse.Error)
 	}
 	return deletedUser, nil
+}
+
+func (db *UserRepositoryDatabase) AddFavoriteCongressPerson(id uint64, congressPerson model.FavoriteCongressPerson) (model.User, error) {
+	var user model.User
+	dbResponse := db.connection.First(&user, id)
+	if dbResponse.Error != nil {
+		// TODO: Create Error Handler 
+		return model.User{}, fmt.Errorf("user with id '%d' not found", id)
+	}
+	var favoriteCongressPersons datatypes.JSONSlice[model.FavoriteCongressPerson]
+	favoriteCongressPersons = user.FavoriteCongressPersons
+	favoriteCongressPersons = append(favoriteCongressPersons, congressPerson)
+
+	dbResponse = db.connection.Model(&user).Update("favorite_congress_persons", favoriteCongressPersons)
+	if dbResponse.Error != nil {
+		return model.User{}, fmt.Errorf("error adding favorite congress person to user with id '%d': %s", id, dbResponse.Error)
+	}
+	return user, nil
 }

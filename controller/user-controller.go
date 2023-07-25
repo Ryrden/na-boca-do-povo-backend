@@ -16,6 +16,7 @@ type UserController interface {
 	Create(ctx *gin.Context) (int, dto.Response)
 	Update(ctx *gin.Context) (int, dto.Response)
 	Delete(ctx *gin.Context) (int, dto.Response)
+	AddFavoriteCongressPerson(ctx *gin.Context) (int, dto.Response)
 }
 
 type controller struct {
@@ -74,4 +75,21 @@ func (c *controller) Delete(ctx *gin.Context) (int, dto.Response) {
 		return http.StatusBadRequest, dto.InvalidIdResponse
 	}
 	return c.service.Delete(id)
+}
+
+
+func (c *controller) AddFavoriteCongressPerson(ctx *gin.Context) (int, dto.Response) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return http.StatusBadRequest, dto.InvalidIdResponse
+	}
+	var favoriteCongressPerson model.FavoriteCongressPerson
+	if err := ctx.BindJSON(&favoriteCongressPerson); err != nil {
+		return http.StatusBadRequest, dto.Response {
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		}
+	}
+	return c.service.AddFavoriteCongressPerson(id, favoriteCongressPerson)
 }

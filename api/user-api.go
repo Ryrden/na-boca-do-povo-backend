@@ -39,3 +39,8 @@ func (api *UserApi) Delete(ctx *gin.Context) {
 	status, response := api.userController.Delete(ctx)
 	ctx.JSON(status, response)
 }
+
+func (api *UserApi) AddFavoriteCongressPerson(ctx *gin.Context) {
+	status, response := api.userController.AddFavoriteCongressPerson(ctx)
+	ctx.JSON(status, response)
+}

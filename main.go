@@ -12,17 +12,16 @@ var (
 	userRepository repository.UserRepository = repository.NewUserRepository()
 	userService    service.UserService       = service.NewUserService(userRepository)
 	userController controller.UserController = controller.NewUserController(userService)
-
-	// REVIEW: maybe pass the user repository to the favorite congress person repository is the best way
-	favoriteCongressPersonRepository repository.FavoriteCongressPersonRepository = repository.NewFavoriteCongressPersonRepository()
-	favoriteCongressPersonService    service.FavoriteCongressPersonService       = service.NewFavoriteCongressPersonService(favoriteCongressPersonRepository)
-	favoriteCongressPersonController controller.FavoriteCongressPersonController = controller.NewFavoriteCongressPersonController(favoriteCongressPersonService)
 )
 
 func setHeaders(ctx *gin.Context) {
 	ctx.Header("Access-Control-Allow-Origin", "*")
 	ctx.Header("Content-Type", "application/json")
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+	ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	ctx.Writer.Header().Set("Content-Type", "application/json")
+	ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	ctx.Next()
 }
 
@@ -32,7 +31,6 @@ func main() {
 	server.Use(gin.Recovery(), gin.Logger())
 
 	userAPI := api.NewUserAPI(userController)
-	favoriteCongressPersonApi := api.NewFavoriteCongressPersonApi(favoriteCongressPersonController)
 
 	apiRoutes := server.Group("/api")
 	apiRoutes.Use(setHeaders)
@@ -44,12 +42,7 @@ func main() {
 			user.POST("/", userAPI.Create)
 			user.PUT("/:id", userAPI.Update)
 			user.DELETE("/:id", userAPI.Delete)
-
-			favoriteCongresspersons := user.Group("/:id/favorite-congresspersons")
-			{
-				favoriteCongresspersons.GET("/", favoriteCongressPersonApi.GetFavoriteCongressPersons)
-				favoriteCongresspersons.POST("/", favoriteCongressPersonApi.AddFavoriteCongressPerson)
-			}
+			user.POST("/favorite-congressperson/:id", userAPI.AddFavoriteCongressPerson)
 		}
 	}
 

@@ -14,6 +14,7 @@ type UserService interface {
 	Create(newUser model.User) (int ,dto.Response)
 	Update(id uint64, newUser model.User) (int ,dto.Response)
 	Delete(id uint64) (int ,dto.Response)
+	AddFavoriteCongressPerson(id uint64, congressPerson model.FavoriteCongressPerson) (int, dto.Response)
 }
 
 type userService struct {
@@ -103,5 +104,22 @@ func (service *userService) Delete(id uint64) (int, dto.Response) {
 		Success: true,
 		Message: "user deleted successfully",
 		Data:    deletedUser,
+	}
+}
+
+func (service *userService) AddFavoriteCongressPerson(id uint64, congressPerson model.FavoriteCongressPerson) (int, dto.Response) {
+	newCongressPerson, err := service.repository.AddFavoriteCongressPerson(id, congressPerson)
+	if err != nil {
+		return http.StatusInternalServerError, dto.Response{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		}
+	}
+	
+	return http.StatusOK, dto.Response{
+		Success: true,
+		Message: "favorite congress person added successfully",
+		Data:    newCongressPerson,
 	}
 }

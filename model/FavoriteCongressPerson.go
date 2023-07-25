@@ -9,5 +9,5 @@ type FavoriteCongressPerson struct {
     SiglaUf string `json:"siglaUf" binding:"required"`
     IdLegislatura uint64 `json:"idLegislatura" binding:"required"`
     UrlFoto string `json:"urlFoto" binding:"required"`
-    Email string `json:"email" binding:"required, email"`
+    Email string `json:"email" binding:"required,email"`
 }
