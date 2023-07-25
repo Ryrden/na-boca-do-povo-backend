@@ -12,7 +12,7 @@ import (
 )
 
 type FavoriteCongressPersonController interface {
-	//GetFavoriteCongressPersons(ctx *gin.Context) dto.Response
+	FindAll(ctx *gin.Context) (int, dto.Response)
 	AddFavoriteCongressPerson(ctx *gin.Context) (int, dto.Response)
 	//RemoveFavoriteCongressPerson(ctx *gin.Context) dto.Response
 	//
@@ -28,23 +28,24 @@ func NewFavoriteCongressPersonController(service service.FavoriteCongressPersonS
 	}
 }
 
-//func (c *favoriteCongressPersonController) GetFavoriteCongressPersons(ctx *gin.Context) dto.Response {
+func (c *favoriteCongressPersonController) FindAll(ctx *gin.Context) (int, dto.Response) {
+	return c.service.FindAll()
+}
 
 func (c *favoriteCongressPersonController) AddFavoriteCongressPerson(ctx *gin.Context) (int, dto.Response) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
 		return http.StatusBadRequest, dto.InvalidIdResponse
 	}
-	var congressPerson model.CongressPerson
-	if err := ctx.BindJSON(&congressPerson); err != nil {
+	var favoriteCongressPerson model.FavoriteCongressPerson
+	if err := ctx.BindJSON(&favoriteCongressPerson); err != nil {
 		return http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: err.Error(),
 			Data:    nil,
 		}
 	}
-	//convert congressPerson to json.RawMessage
-	congressPersonJson, err := json.Marshal(congressPerson)
+	favoriteCongressPersonJson, err := json.Marshal(favoriteCongressPerson)
 	if err != nil {
 		return http.StatusInternalServerError, dto.Response{
 			Success: false,
@@ -52,6 +53,6 @@ func (c *favoriteCongressPersonController) AddFavoriteCongressPerson(ctx *gin.Co
 			Data:    nil,
 		}
 	}
-	congressPersonJson = json.RawMessage(congressPersonJson)
-	return c.service.AddFavoriteCongressPerson(id, congressPersonJson)
+	favoriteCongressPersonJson = json.RawMessage(favoriteCongressPersonJson)
+	return c.service.AddFavoriteCongressPerson(id, favoriteCongressPersonJson)
 }

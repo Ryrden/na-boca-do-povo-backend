@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/ryrden/na-boca-do-povo-backend/controller"
 )
@@ -19,45 +17,25 @@ func NewUserAPI(userController controller.UserController) *UserApi {
 
 func (api *UserApi) GetUsers(ctx *gin.Context) {
 	status, response := api.userController.FindAll()
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
 	ctx.JSON(status, response)
 }
 
 func (api *UserApi) GetUser(ctx *gin.Context) {
 	status, response := api.userController.FindById(ctx)
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
 	ctx.JSON(status, response)
 }
 
 func (api *UserApi) Create(ctx *gin.Context) {
 	status, response := api.userController.Create(ctx)
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
 	ctx.JSON(status, response)
 }
 
 func (api *UserApi) Update(ctx *gin.Context) {
 	status, response := api.userController.Update(ctx)
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
 	ctx.JSON(status, response)
 }
 
 func (api *UserApi) Delete(ctx *gin.Context) {
 	status, response := api.userController.Delete(ctx)
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
 	ctx.JSON(status, response)
 }

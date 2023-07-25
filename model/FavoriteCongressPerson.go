@@ -1,6 +1,6 @@
 package model
 
-type CongressPerson struct {
+type FavoriteCongressPerson struct {
     Id uint64 `json:"id" binding:"required"`
     Uri string  `json:"uri" binding:"required"`
     Nome string `json:"nome" binding:"required"`

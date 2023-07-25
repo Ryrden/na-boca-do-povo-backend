@@ -1,8 +1,8 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
+	"gorm.io/datatypes"
 )
 
 type User struct {
@@ -12,5 +12,5 @@ type User struct {
 	Password                string            `json:"password" gorm:"not null" binding:"required"`
 	CreatedAt               time.Time         `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
 	UpdatedAt               time.Time         `json:"updated_at" gorm:"default:CURRENT_TIMESTAMP"`
-	FavoriteCongressPersons []json.RawMessage `json:"favorite_congresspersons" gorm:"type:json;default:'{}'"`
+	FavoriteCongressPersons datatypes.JSON    `json:"favorite_congresspersons" gorm:"type:jsonb;default:'[]'"`
 }

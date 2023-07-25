@@ -19,16 +19,13 @@ func NewFavoriteCongressPersonApi(favoriteCongressPersonController controller.Fa
 }
 
 func (api *FavoriteCongressPersonApi) GetFavoriteCongressPersons(ctx *gin.Context) {
-	//TODO: implement
-	ctx.JSON(http.StatusNotImplemented, dto.NotImplementedResponse)
+	status, response := api.favoriteCongressPersonController.FindAll(ctx)
+	ctx.JSON(status, response)
 }
 
 func (api *FavoriteCongressPersonApi) AddFavoriteCongressPerson(ctx *gin.Context) {
 	status, response := api.favoriteCongressPersonController.AddFavoriteCongressPerson(ctx)
-	if status != http.StatusOK {
-		ctx.JSON(status, response)
-		return
-	}
+
 	ctx.JSON(status, response)
 }
 

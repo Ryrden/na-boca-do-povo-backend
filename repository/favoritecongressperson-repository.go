@@ -10,6 +10,7 @@ import (
 )
 
 type FavoriteCongressPersonRepository interface {
+	FindAll() ([]model.FavoriteCongressPerson, error)
 	AddFavoriteCongressPerson(id uint64, congressPerson json.RawMessage) (json.RawMessage, error)
 }
 
@@ -26,21 +27,25 @@ func NewFavoriteCongressPersonRepository() FavoriteCongressPersonRepository {
 	return &FCPRepositoryDatabase{
 		connection: db,
 	}
+
+func (db *FCPRepositoryDatabase) FindAll() ([]model.FavoriteCongressPerson, error) {
+	//TODO: Implement
+	return model.FavoriteCongressPerson{}, nil
 }
 
 func (db *FCPRepositoryDatabase) AddFavoriteCongressPerson(id uint64, congressPerson json.RawMessage) (json.RawMessage, error) {
-	var user model.User
-	dbResponse := db.connection.First(&user, id)
-	if dbResponse.Error != nil {
-		return json.RawMessage{}, fmt.Errorf("user with id '%d' not found", id)
-	}
+	// var user model.User
+	// dbResponse := db.connection.First(&user, id)
+	// if dbResponse.Error != nil {
+	// 	return json.RawMessage{}, fmt.Errorf("user with id '%d' not found", id)
+	// }
 
-	// REVIEW: Is this the best way to do this?
-	user.FavoriteCongressPersons = append(user.FavoriteCongressPersons, congressPerson)
+	// // REVIEW: Is this the best way to do this?
+	// user.FavoriteCongressPersons = append(user.FavoriteCongressPersons, congressPerson)
 
-	if err := db.connection.Save(&user).Error; err != nil {
-		return json.RawMessage{}, fmt.Errorf("failed to add favorite congress person to user with id '%d'", id)
-	}
-
-	return congressPerson, nil
+	// if err := db.connection.Save(&user).Error; err != nil {
+	// 	return json.RawMessage{}, fmt.Errorf("failed to add favorite congress person to user with id '%d'", id)
+	// }
+	//TODO: Implement
+	return json.RawMessage{}, nil
 }
